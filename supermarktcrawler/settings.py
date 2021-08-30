@@ -8,12 +8,16 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 BOT_NAME = 'supermarktcrawler'
-
+LOG_LEVEL = 'INFO'
 # crawl only 10 items
 IS_DEV = True
+# IS_DEV = False
 
 SPIDER_MODULES = ['supermarktcrawler.spiders']
 NEWSPIDER_MODULE = 'supermarktcrawler.spiders'
+
+MONGO_URI = 'mongodb+srv://sem:deka@cluster0.olmaj.mongodb.net/product_data?retryWrites=true&w=majority'
+MONGO_DATABASE = 'product_data'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -65,9 +69,9 @@ CONCURRENT_REQUESTS_PER_DOMAIN = 1
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'supermarktcrawler.pipelines.SupermarktcrawlerPipeline': 300,
-#}
+ITEM_PIPELINES = {
+   'supermarktcrawler.pipelines.SupermarktcrawlerPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

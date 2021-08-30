@@ -68,7 +68,7 @@ class AlbertHeijnSpider(scrapy.Spider):
 
     def parse_product(self, response):
         '''scrape product page'''
-        item = SupermarktcrawlerItem()
+        item = SupermarktcrawlerItem(url=response.url)
         item['naam'] = response.xpath('//h1/span/text()').get()
         item['omschrijving'] = response.xpath('//li[contains(@class, "product-info-description_listItem")]/text()').getall()
         item['inhoud'] = response.xpath('//h4[text()="Inhoud en gewicht"]/following-sibling::p/text()').getall()
