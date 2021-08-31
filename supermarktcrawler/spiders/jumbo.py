@@ -1,13 +1,6 @@
 import scrapy
-import re
-import sys
-import json
-from time import sleep
 from supermarktcrawler.settings import IS_DEV
 from supermarktcrawler.items import SupermarktcrawlerItem
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
 
 class JumboSpider(scrapy.Spider):
     name = 'jumbo'
@@ -16,25 +9,29 @@ class JumboSpider(scrapy.Spider):
     offset = 0
 
     def parse(self, response):
-        for product in response.xpath('//a[contains(@class, "jum-product-card")]/@href').getall():
-            yield scrapy.Request('https://www.jumbo.com/'+product, callback=self.parse_product)
+        for product in response.xpath('//div[div[a[contains(@class, "jum-product-card")]]]'):
+            item = SupermarktcrawlerItem()
+            item['aanbieding'] = [x.strip() for x in product.xpath('.//ul[contains(@class, "jum-tag-list unstyled")]//span/text()').getall()] or []
+            url = 'https://www.jumbo.com/'+product.xpath('.//a/@href').get()
+            yield scrapy.Request(url, callback=self.parse_product, meta={'item': item})
 
         # go to next page unless this is last page
         final_page_active = response.xpath('//ul[contains(@class, "pagination")]/li[last()][contains(@class, "current")]')
         if not IS_DEV and not final_page_active or self.offset > 50000:
-            print('badjhvajhdv\n\n\\n\n\n')
             self.offset += 24
             yield scrapy.Request(f'https://www.jumbo.com/producten/?offSet={self.offset}&pageSize=24', callback=self.parse)
 
-    def parse_product(self, response):
-        item = SupermarktcrawlerItem(url=response.url)
+    def parse_product(self, response, meta=None):
+        item = response.meta['item']
+        item['url'] = response.url
         item['naam'] = response.xpath('//h1/text()').get()
         price = response.xpath('//div[@class="current-price"]')
         euros = price.xpath('./span/text()').get()
         cents = price.xpath('./sup/text()').get()
         item['prijs'] = f'{euros}.{cents}'
         item['inhoud'] = response.xpath('//h2/text()').get()
-
+        item['categorie'] = [x.strip() for x in response.xpath('//ol[@class="breadcrumb-trail"]//a/text()').getall()]
+        
         yield item
         # fetch additional data
         # sku = response.url.split('-')[-1]

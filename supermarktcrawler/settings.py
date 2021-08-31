@@ -8,10 +8,11 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 BOT_NAME = 'supermarktcrawler'
-LOG_LEVEL = 'INFO'
+# laat bezochte sites en gespracede items zien
+LOG_LEVEL = 'DEBUG'
 # crawl only 10 items
-IS_DEV = True
-# IS_DEV = False
+# IS_DEV = True
+IS_DEV = False
 
 SPIDER_MODULES = ['supermarktcrawler.spiders']
 NEWSPIDER_MODULE = 'supermarktcrawler.spiders'

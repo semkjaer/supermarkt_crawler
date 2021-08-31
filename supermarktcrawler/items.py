@@ -15,3 +15,4 @@ class SupermarktcrawlerItem(scrapy.Item):
     kenmerken = scrapy.Field()
     prijs = scrapy.Field()
     aanbieding = scrapy.Field()
+    categorie = scrapy.Field()

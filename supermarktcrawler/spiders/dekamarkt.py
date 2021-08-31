@@ -42,10 +42,10 @@ class DekamarktSpider(scrapy.Spider):
         chromedriver.close()
 
         for i, url in enumerate(products):
-            yield scrapy.Request(url, callback=self.parse_product)
+            yield scrapy.Request(url, callback=self.parse_product_page)
             if i == 9 and IS_DEV: break
 
-    def parse_product(self, response):
+    def parse_product_page(self, response):
         if response.url != response.request.url:
             return scrapy.Request(response.request.url, callback=self.parse_product)
         item = SupermarktcrawlerItem(url=response.url)
@@ -55,6 +55,7 @@ class DekamarktSpider(scrapy.Spider):
         cents = response.xpath('//span[@class="product-card__price__cents"]/text()').get()
         item['prijs'] = euros + cents
         item['omschrijving'] = response.xpath('//div[@class="product-details__extra__content"]/text()').get()
-        item['aanbieding'] = True if response.xpath('//span[@class="product-card__price__old"]/text()').get() else False
+        item['aanbieding'] = response.xpath('//div[@class="product-card__discount"]//text()').getall() or []
+        item['categorie'] = [x.strip() for x in response.xpath('//div[@class="bread-crumb"]//a/text()').getall()[:-1]]
 
         yield item

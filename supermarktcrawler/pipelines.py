@@ -5,6 +5,7 @@
 
 
 # useful for handling different item types with a single interface
+from supermarktcrawler.settings import IS_DEV
 from .items import SupermarktcrawlerItem
 import logging
 import pymongo
@@ -30,7 +31,8 @@ class SupermarktcrawlerPipeline:
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
+        if not IS_DEV:
+            self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
         return item
 
 # class SupermarktcrawlerPipeline:
