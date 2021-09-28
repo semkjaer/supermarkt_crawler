@@ -11,8 +11,14 @@ BOT_NAME = 'supermarktcrawler'
 # laat bezochte sites en gespracede items zien
 LOG_LEVEL = 'DEBUG'
 # crawl only 10 items
-# IS_DEV = True
-IS_DEV = False
+IS_DEV = True
+#IS_DEV = False
+
+ROTATING_PROXY_LIST = [
+    'http://open.proxymesh.com:31280',
+    'http://nl.proxymesh.com:31280'
+]
+PROXY = 'http://open.proxymesh.com:31280'
 
 SPIDER_MODULES = ['supermarktcrawler.spiders']
 NEWSPIDER_MODULE = 'supermarktcrawler.spiders'
@@ -58,9 +64,10 @@ CONCURRENT_REQUESTS_PER_DOMAIN = 1
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'supermarktcrawler.middlewares.SupermarktcrawlerDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
+    'rotating_proxies.middlewares.BanDetectionMiddleware': 620
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

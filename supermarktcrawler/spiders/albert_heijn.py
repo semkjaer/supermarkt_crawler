@@ -1,7 +1,7 @@
 from time import sleep
 from supermarktcrawler.items import SupermarktcrawlerItem
 import scrapy
-from supermarktcrawler.settings import IS_DEV
+from supermarktcrawler.settings import IS_DEV, PROXY
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -23,6 +23,7 @@ class AlbertHeijnSpider(scrapy.Spider):
         }
         options = Options()
         options.headless = True
+        # options.add_argument('--proxy-server=%s' % PROXY)
         chromedriver = webdriver.Chrome(executable_path=platforms[sys.platform], options=options)
 
         categories = {'https://www.ah.nl' + href for href in response.xpath('//a[@data-testhook="taxonomy-main"]/@href').getall()}

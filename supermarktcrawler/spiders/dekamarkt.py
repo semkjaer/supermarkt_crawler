@@ -2,7 +2,7 @@ import scrapy
 import re
 import sys
 from time import sleep
-from supermarktcrawler.settings import IS_DEV
+from supermarktcrawler.settings import IS_DEV, PROXY
 from supermarktcrawler.items import SupermarktcrawlerItem
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -21,6 +21,7 @@ class DekamarktSpider(scrapy.Spider):
         }
         options = Options()
         options.headless = True
+        options.add_argument('--proxy-server=%s' % PROXY)
         chromedriver = webdriver.Chrome(executable_path=platforms[sys.platform], options=options)
         products = set()
         # zoekt product urls met selenium: category -> subcategory => extract product links
@@ -46,8 +47,6 @@ class DekamarktSpider(scrapy.Spider):
             if i == 9 and IS_DEV: break
 
     def parse_product_page(self, response):
-        if response.url != response.request.url:
-            return scrapy.Request(response.request.url, callback=self.parse_product)
         item = SupermarktcrawlerItem(url=response.url)
         item['naam'] = response.xpath('//h1[@class="product-details__info__title"]/text()').get()
         item['inhoud'] = response.xpath('//span[@class="product-details__info__subtitle"]/text()').get()
@@ -57,5 +56,5 @@ class DekamarktSpider(scrapy.Spider):
         item['omschrijving'] = response.xpath('//div[@class="product-details__extra__content"]/text()').get()
         item['aanbieding'] = response.xpath('//div[@class="product-card__discount"]//text()').getall() or []
         item['categorie'] = [x.strip() for x in response.xpath('//div[@class="bread-crumb"]//a/text()').getall()[:-1]]
-
+        
         yield item

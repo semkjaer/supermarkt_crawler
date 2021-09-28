@@ -9,6 +9,8 @@ class JumboSpider(scrapy.Spider):
     offset = 0
 
     def parse(self, response):
+        print(response.request.meta)
+        print(response.meta)
         for product in response.xpath('//div[div[a[contains(@class, "jum-product-card")]]]'):
             item = SupermarktcrawlerItem()
             item['aanbieding'] = [x.strip() for x in product.xpath('.//ul[contains(@class, "jum-tag-list unstyled")]//span/text()').getall()] or []
