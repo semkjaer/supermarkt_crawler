@@ -22,11 +22,20 @@ class AlbertHeijnSpider(scrapy.Spider):
             'win32' : r'C:\Users\SemKj\Downloads\chromedriver_win32\chromedriver'
         }
         options = Options()
+        webdriver.DesiredCapabilities.CHROME['proxy'] = {
+            "httpProxy": PROXY,
+            "ftpProxy": PROXY,
+            "sslProxy": PROXY,
+            "proxyType": "MANUAL",
+
+        }
+
+        webdriver.DesiredCapabilities.CHROME['acceptSslCerts']=True
         options.headless = True
-        # options.add_argument('--proxy-server=%s' % PROXY)
         chromedriver = webdriver.Chrome(executable_path=platforms[sys.platform], options=options)
 
         categories = {'https://www.ah.nl' + href for href in response.xpath('//a[@data-testhook="taxonomy-main"]/@href').getall()}
+        urls = set()
         # gebruikt selenium om alle subcategorieen te krijgen
         for i, category_url in enumerate(categories):
             chromedriver.get(category_url)
@@ -40,8 +49,7 @@ class AlbertHeijnSpider(scrapy.Spider):
             except: pass
             sleep(1)
             links = chromedriver.find_elements(By.XPATH, '//a[contains(@class, "taxonomy-child_root")]')
-        
-            urls = set()
+
             for link in links: # ?page=... bepaald hoeveel producten weergegeven worden
                 url = link.get_attribute('href') + '?page=25'
                 if url:

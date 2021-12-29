@@ -9,14 +9,12 @@ class JumboSpider(scrapy.Spider):
     offset = 0
 
     def parse(self, response):
-        print(response.request.meta)
-        print(response.meta)
-        for product in response.xpath('//div[div[a[contains(@class, "jum-product-card")]]]'):
+        for product in response.xpath('//article[div[a[@class="link"]]]'):
             item = SupermarktcrawlerItem()
-            item['aanbieding'] = [x.strip() for x in product.xpath('.//ul[contains(@class, "jum-tag-list unstyled")]//span/text()').getall()] or []
+            item['aanbieding'] = [x.strip() for x in product.xpath('string(./div[@class="jum-tag-list unstyled"])').getall()] or []
             url = 'https://www.jumbo.com/'+product.xpath('.//a/@href').get()
             yield scrapy.Request(url, callback=self.parse_product, meta={'item': item})
-
+        
         # go to next page unless this is last page
         final_page_active = response.xpath('//ul[contains(@class, "pagination")]/li[last()][contains(@class, "current")]')
         if not IS_DEV and not final_page_active or self.offset > 50000:

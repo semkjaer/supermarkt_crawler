@@ -11,27 +11,41 @@ from selenium.webdriver.common.by import By
 class DekamarktSpider(scrapy.Spider):
     name = 'dekamarkt'
     allowed_domains = ['dekamarkt.nl']
-    start_urls = ['https://www.dekamarkt.nl/']
+    start_urls = ['https://www.dekamarkt.nl']
 
     def parse(self, response):
-        categories = set(response.xpath('//div[@class="drsMenu"]/a/@href').getall())
         platforms = {
             'linux' : '/usr/lib/chromium-browser/chromedriver',
             'win32' : r'C:\Users\SemKj\Downloads\chromedriver_win32\chromedriver'
         }
         options = Options()
+        webdriver.DesiredCapabilities.CHROME['proxy'] = {
+            "httpProxy": PROXY,
+            "ftpProxy": PROXY,
+            "sslProxy": PROXY,
+            "proxyType": "MANUAL",
+
+        }
+
+        webdriver.DesiredCapabilities.CHROME['acceptSslCerts']=True
         options.headless = True
-        options.add_argument('--proxy-server=%s' % PROXY)
         chromedriver = webdriver.Chrome(executable_path=platforms[sys.platform], options=options)
+
+        chromedriver.get('https://www.dekamarkt.nl/boodschappen')
+        sleep(10)
+        try: 
+            chromedriver.find_element(By.XPATH, '//button[contains(text(), "Accepteren")]').click()
+        except: 
+            pass
+        categories = set(x.get_attribute('href') for x in chromedriver.find_elements(By.XPATH, "//a[contains(@href, '/boodschappen/')]"))
+        print(chromedriver.find_elements(By.XPATH, "//a[contains(@href, '/boodschappen/')]"))
         products = set()
         # zoekt product urls met selenium: category -> subcategory => extract product links
-        for i, href in enumerate(categories):
-            chromedriver.get('https://www.dekamarkt.nl' + href)
-            if i == 0: # wacht tot eerste pagina is geladen en accepteerd cookies
-                sleep(10)
-                try: chromedriver.find_element(By.XPATH, '//button[contains(text(), "Accepteren")]').click()
-                except: pass
-            subcategories = set(x.get_attribute('href') for x in chromedriver.find_elements(By.XPATH, f'//ul/li/a[contains(@href, "{href}/")]'))
+        for url in categories:
+            chromedriver.get(url)
+            href = url.split('.nl/')[-1]
+            subcategories = set(x.get_attribute('href') for x in chromedriver.find_elements(By.XPATH, f'//ul/li/a[contains(@href, "{href}")]'))
+
             for link in subcategories:
                 chromedriver.get(link)
                 href = '/'.join(link.split('/')[4:])

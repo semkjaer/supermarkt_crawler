@@ -8,6 +8,6 @@ from scrapy.utils.project import get_project_settings
 process = CrawlerProcess(get_project_settings())
 process.crawl('dekamarkt')
 process.crawl('albert_heijn')
-process.crawl('jumbo')
+#process.crawl('jumbo')
 process.crawl('vomar')
 process.start()
