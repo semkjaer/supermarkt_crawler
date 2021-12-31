@@ -33,17 +33,4 @@ class DekamarktSpider(scrapy.Spider):
                     yield item
 
                 elif '/aanbiedingen/' in href:
-                    yield scrapy.Request('https://www.dekamarkt.nl'+href, callback=self.parse_category)
-
-    def parse_category(self, response):
-        products = response.xpath('//article')
-        for product in products:
-            links = product.xpath('./a/@href').getall()
-            for href in links:
-                if '/boodschappen/' in href:
-                    item = OfferItem()
-                    item['url'] = 'https://www.dekamarkt.nl' + href
-                    item['aanbieding'] = ' '.join(product.xpath('./div[contains(@class, "discount")]/descendant::*/text()').getall())
-                    item['tijd'] = datetime.now()
-                    item['winkel'] = 'dk'
-                    yield item
+                    yield scrapy.Request('https://www.dekamarkt.nl'+href, callback=self.parse)

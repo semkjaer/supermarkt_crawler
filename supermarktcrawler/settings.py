@@ -11,8 +11,8 @@ BOT_NAME = 'supermarktcrawler'
 # laat bezochte sites en gespcrapede items zien
 LOG_LEVEL = 'DEBUG'
 # crawl only 10 items
-IS_DEV = True
-#IS_DEV = False
+#IS_DEV = True
+IS_DEV = False
 
 ROTATING_PROXY_LIST = [
     'http://nl.proxymesh.com:31280'

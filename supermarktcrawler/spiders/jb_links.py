@@ -8,6 +8,10 @@ class JumboSpider(scrapy.Spider):
     allowed_domains = ['jumbo.com']
     start_urls = ['https://www.jumbo.com/producten/?offSet=0&pageSize=24']
     custom_settings = {
+        'DOWNLOADER_MIDDLEWARES' : {
+            'rotating_proxies.middlewares.RotatingProxyMiddleware': None,
+            'rotating_proxies.middlewares.BanDetectionMiddleware': None
+        },
         'ITEM_PIPELINES' : {
             'supermarktcrawler.pipelines.LinkPipeline': 300,
         }
