@@ -6,11 +6,11 @@
 
 # useful for handling different item types with a single interface
 from supermarktcrawler.settings import IS_DEV
-from .items import SupermarktcrawlerItem
+from .items import ProductItem, OfferItem, LinkItem
 import logging
 import pymongo
 
-class SupermarktcrawlerPipeline:
+class ProductPipeline:
 
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
@@ -31,8 +31,55 @@ class SupermarktcrawlerPipeline:
         self.client.close()
 
     def process_item(self, item, spider):
-        if not IS_DEV:
-            self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
+        self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
+        return item
+
+class OfferPipeline:
+
+    def __init__(self, mongo_uri, mongo_db):
+        self.mongo_uri = mongo_uri
+        self.mongo_db = mongo_db
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            mongo_uri=crawler.settings.get('MONGO_URI'),
+            mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
+        )
+
+    def open_spider(self, spider):
+        self.client = pymongo.MongoClient(self.mongo_uri)
+        self.db = self.client[self.mongo_db]
+
+    def close_spider(self, spider):
+        self.client.close()
+
+    def process_item(self, item, spider):
+        self.db['offers'].replace_one({'url': item['url']}, item, upsert=True)
+        return item
+
+class LinkPipeline:
+
+    def __init__(self, mongo_uri, mongo_db):
+        self.mongo_uri = mongo_uri
+        self.mongo_db = mongo_db
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            mongo_uri=crawler.settings.get('MONGO_URI'),
+            mongo_db=crawler.settings.get('MONGO_DATABASE', 'items')
+        )
+
+    def open_spider(self, spider):
+        self.client = pymongo.MongoClient(self.mongo_uri)
+        self.db = self.client[self.mongo_db]
+
+    def close_spider(self, spider):
+        self.client.close()
+
+    def process_item(self, item, spider):
+        self.db['links'].replace_one({'url': item['url']}, item, upsert=True)
         return item
 
 # class SupermarktcrawlerPipeline:

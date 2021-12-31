@@ -8,17 +8,16 @@
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
 BOT_NAME = 'supermarktcrawler'
-# laat bezochte sites en gespracede items zien
+# laat bezochte sites en gespcrapede items zien
 LOG_LEVEL = 'DEBUG'
 # crawl only 10 items
-#IS_DEV = True
-IS_DEV = False
+IS_DEV = True
+#IS_DEV = False
 
 ROTATING_PROXY_LIST = [
-    'http://open.proxymesh.com:31280',
     'http://nl.proxymesh.com:31280'
 ]
-PROXY = 'http://open.proxymesh.com:31280'
+PROXY = 'http://nl.proxymesh.com:31280'
 
 SPIDER_MODULES = ['supermarktcrawler.spiders']
 NEWSPIDER_MODULE = 'supermarktcrawler.spiders'
@@ -77,9 +76,7 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-   'supermarktcrawler.pipelines.SupermarktcrawlerPipeline': 300,
-}
+
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

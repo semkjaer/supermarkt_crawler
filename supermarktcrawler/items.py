@@ -6,7 +6,7 @@
 import scrapy
 
 
-class SupermarktcrawlerItem(scrapy.Item):
+class ProductItem(scrapy.Item):
     # define the fields for your item here like:
     url = scrapy.Field()
     naam = scrapy.Field()
@@ -14,5 +14,19 @@ class SupermarktcrawlerItem(scrapy.Item):
     inhoud = scrapy.Field()
     kenmerken = scrapy.Field()
     prijs = scrapy.Field()
-    aanbieding = scrapy.Field()
     categorie = scrapy.Field()
+    tijd = scrapy.Field()
+    winkel = scrapy.Field()
+
+class OfferItem(scrapy.Item):
+    # define the fields for your item here like:
+    url = scrapy.Field()
+    aanbieding = scrapy.Field()
+    tijd = scrapy.Field()
+    winkel = scrapy.Field()
+
+class LinkItem(scrapy.Item):
+    # define the fields for your item here like:
+    url = scrapy.Field()
+    tijd = scrapy.Field()
+    winkel = scrapy.Field()

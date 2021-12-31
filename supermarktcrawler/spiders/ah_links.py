@@ -1,5 +1,6 @@
 from time import sleep
-from supermarktcrawler.items import SupermarktcrawlerItem
+from datetime import datetime
+from supermarktcrawler.items import LinkItem
 import scrapy
 from supermarktcrawler.settings import IS_DEV, PROXY
 from selenium import webdriver
@@ -10,9 +11,14 @@ import re
 
 
 class AlbertHeijnSpider(scrapy.Spider):
-    name = 'albert_heijn'
+    name = 'ah_links'
     allowed_domains = ['ah.nl']
     start_urls = ['https://www.ah.nl/producten']
+    custom_settings = {
+        'ITEM_PIPELINES' : {
+            'supermarktcrawler.pipelines.LinkPipeline': 300,
+        }
+    }
 
     # scrapy doet de eerste request automatisch met callback=self.parse
     def parse(self, response):
@@ -65,33 +71,11 @@ class AlbertHeijnSpider(scrapy.Spider):
 
     def parse_category(self, response):
         '''crawl subcategories, yield product pages'''
-        # set(list()) to filter duplicates 
-        products = response.xpath('//a[contains(@href, "producten/product")]')
-        for i, product in enumerate(products):
-            item = SupermarktcrawlerItem()
-            item['aanbieding'] = product.xpath('.//span[contains(@class, "shield_text")]/text()').getall() or []
+        links = response.xpath('//a[contains(@href, "producten/product")]/@href').getall()
+        for i, href in enumerate(set(links)):
+            item = LinkItem()
+            item['url'] = 'https://www.ah.nl' + href
+            item['tijd'] = datetime.now()
+            item['winkel'] = 'ah'
 
-            yield scrapy.Request('https://www.ah.nl'+product.xpath('@href').get(), 
-                                        callback=self.parse_product, meta={'item': item})
-            if IS_DEV and i == 9: break
-
-
-    def parse_product(self, response, meta=None):
-        '''scrape product page'''
-        item = response.meta['item']
-        item['url'] = response.url
-        item['naam'] = response.xpath('//h1/span/text()').get()
-        item['omschrijving'] = response.xpath('//li[contains(@class, "product-info-description_listItem")]/text()').getall()
-        item['inhoud'] = response.xpath('//h4[text()="Inhoud en gewicht"]/following-sibling::p/text()').getall()
-        item['kenmerken'] = response.xpath('//h4[text()="Kenmerken"]/following-sibling::ul//text()').getall()
-        # prijs staat in 3 spans waar de middelste een punt is eg: '3', '.', '99'
-        price = ''.join(response.xpath('//div[contains(@class, "price-amount_root")]/span/text()').getall())
-        prijs = re.sub(r'/.', '', price)
-        if len(prijs) == 8:
-            item['prijs'] = prijs[-4:]
-        else:
-            item['prijs'] = prijs
-        item['categorie'] = [x for x in response.xpath('//ol[contains(@class, "page-navigation_breadcrumbs")]//span/text()').getall() if x not in ['Home', 'Producten']]
-
-        yield item
-
+            yield item

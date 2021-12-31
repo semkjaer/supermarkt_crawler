@@ -1,12 +1,19 @@
 import scrapy
 import re
-from supermarktcrawler.settings import IS_DEV
-from supermarktcrawler.items import SupermarktcrawlerItem
+import pymongo
+from datetime import datetime
+from supermarktcrawler.settings import IS_DEV, MONGO_DATABASE, MONGO_URI
+from supermarktcrawler.items import LinkItem
 
 class JumboSpider(scrapy.Spider):
-    name = 'vomar'
+    name = 'vm_links'
     allowed_domains = ['vomar.nl']
     start_urls = ['https://www.vomar.nl/producten']
+    custom_settings = {
+        'ITEM_PIPELINES' : {
+            'supermarktcrawler.pipelines.LinkPipeline': 300,
+        }
+    }
 
     def parse(self, response):
         categories = response.xpath('//div[@class="col-xs-6 col-md-2 productrange-group"]/a/@href').getall()
@@ -23,16 +30,9 @@ class JumboSpider(scrapy.Spider):
     def parse_subcategory(self, response):
         products = response.xpath('//div[@class="col-md-4 product"]/a/@href').getall()
         for i, href in enumerate(products):
-            yield scrapy.Request('https://www.vomar.nl'+href, callback=self.parse_product)
-            #if IS_DEV and i == 9: break
+            item = LinkItem()
+            item['url'] = 'https://www.vomar.nl' + href
+            item['tijd'] = datetime.now()
+            item['winkel'] = 'vm'
 
-    def parse_product(self, response):
-        item = SupermarktcrawlerItem(url=response.url)
-        item['naam'] = response.xpath('//h1/text()').get()
-        item['prijs'] = re.sub(' ', '', ''.join(response.xpath('//p[@class="price"]//child::text()').getall()))
-        item['inhoud'] = response.xpath('//p[@class="price"]/preceding-sibling::p[last()]/text()').get()
-        item['omschrijving'] = response.xpath('//p[@class="price"]/parent::*/p/text()').get()
-        item['categorie'] = [x for x in response.xpath('//div[@class="breadcrumb-container"]//a/text()').getall() if not x == 'Assortiment']
-
-        yield item
-
+            yield item
