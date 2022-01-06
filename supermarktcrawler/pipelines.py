@@ -35,7 +35,7 @@ class ProductPipeline:
     def process_item(self, item, spider):
         if IS_DEV == False:
             self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
-            return item
+        return item
 
 class OfferPipeline:
 
@@ -60,7 +60,7 @@ class OfferPipeline:
     def process_item(self, item, spider):
         if IS_DEV == False:
             self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
-            return item
+        return item
 
 class LinkPipeline:
 
@@ -85,7 +85,7 @@ class LinkPipeline:
     def process_item(self, item, spider):
         if IS_DEV == False:
             self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
-            return item
+        return item
 
 # class SupermarktcrawlerPipeline:
 #     def __init__(self):
