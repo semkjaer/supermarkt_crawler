@@ -9,6 +9,7 @@ from supermarktcrawler.items import LinkItem, ProductItem
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from os import path
 
 class DekamarktSpider(scrapy.Spider):
     name = 'dk_products'
@@ -25,7 +26,14 @@ class DekamarktSpider(scrapy.Spider):
     }
 
     def parse(self, response):
-        item = ProductItem(url=response.url)
+        if path.exists('~/media/pi/48A0-4B5F/pages/'):
+            filename = response.url.split('://')[-1].replace('/', '_')
+            with open(f'/media/pi/48A0-4B5F/pages/{filename}.html', 'w') as html_file:
+                html_file.write(response.text)
+
+        item = ProductItem()
+        item['url'] = response.url
+        item['sku'] = item['url'].split('/')[-1]
         item['naam'] = response.xpath('//h1[@class="product-details__info__title"]/text()').get()
         item['inhoud'] = response.xpath('//span[@class="product-details__info__subtitle"]/text()').get()
         euros = response.xpath('//span[@class="product-card__price__euros"]/text()').get()

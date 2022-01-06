@@ -3,6 +3,7 @@ from supermarktcrawler.settings import IS_DEV, MONGO_URI, MONGO_DATABASE
 from supermarktcrawler.items import ProductItem
 from datetime import datetime
 import pymongo
+from os import path
 
 class JumboSpider(scrapy.Spider):
     name = 'jb_products'
@@ -19,8 +20,14 @@ class JumboSpider(scrapy.Spider):
     }
 
     def parse(self, response):
+        if path.exists('~/media/pi/48A0-4B5F/pages/'):
+            filename = response.url.split('://')[-1].replace('/', '_')
+            with open(f'/media/pi/48A0-4B5F/pages/{filename}.html', 'w') as html_file:
+                html_file.write(response.text)
+
         item = ProductItem()
         item['url'] = response.url
+        item['sku'] = item['url'].split('-')[-1]
         item['naam'] = response.xpath('//h1/text()').get()
         price = response.xpath('//div[@class="current-price"]')
         euros = price.xpath('./span/text()').get()

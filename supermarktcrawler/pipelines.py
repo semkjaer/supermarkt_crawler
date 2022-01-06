@@ -5,10 +5,12 @@
 
 
 # useful for handling different item types with a single interface
-from supermarktcrawler.settings import IS_DEV
+from supermarktcrawler.settings import IS_DEV, MYSQL_DB
 from .items import ProductItem, OfferItem, LinkItem
 import logging
 import pymongo
+import mysql.connector
+
 
 class ProductPipeline:
 
@@ -31,8 +33,9 @@ class ProductPipeline:
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
-        return item
+        if IS_DEV == False:
+            self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
+            return item
 
 class OfferPipeline:
 
@@ -55,8 +58,9 @@ class OfferPipeline:
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db['offers'].replace_one({'url': item['url']}, item, upsert=True)
-        return item
+        if IS_DEV == False:
+            self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
+            return item
 
 class LinkPipeline:
 
@@ -79,8 +83,9 @@ class LinkPipeline:
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db['links'].replace_one({'url': item['url']}, item, upsert=True)
-        return item
+        if IS_DEV == False:
+            self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
+            return item
 
 # class SupermarktcrawlerPipeline:
 #     def __init__(self):
