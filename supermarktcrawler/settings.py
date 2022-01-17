@@ -18,6 +18,7 @@ MYSQL_DB = {
   'host' : 'frello.nl',
   'user' : 'sem',
   'password' : 'Dekamarkt@023'
+  'database' : 'product_data'
 }
 
 ROTATING_PROXY_LIST = [
