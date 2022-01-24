@@ -30,6 +30,6 @@ class JumboSpider(scrapy.Spider):
         
         # go to next page unless this is last page
         final_page_active = response.xpath('//ul[contains(@class, "pagination")]/li[last()][contains(@class, "current")]')
-        if not IS_DEV and not final_page_active or self.offset > 50000:
+        if not IS_DEV and not (final_page_active or self.offset > 50000):
             self.offset += 24
             yield scrapy.Request(f'https://www.jumbo.com/producten/?offSet={self.offset}&pageSize=24', callback=self.parse)
