@@ -9,7 +9,6 @@ from supermarktcrawler.settings import IS_DEV
 from .items import ProductItem, OfferItem, LinkItem
 import logging
 import pymongo
-import mysql.connector
 
 
 class ProductPipeline:
@@ -17,14 +16,12 @@ class ProductPipeline:
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
-        self.cnx = self.mysql_connect()
 
     @classmethod
     def from_crawler(cls, crawler):
         return cls(
             mongo_uri = crawler.settings.get('MONGO_URI'),
             mongo_db = crawler.settings.get('MONGO_DATABASE', 'items')
-            sql_db = crawler.settings.get('MYSQL_DB')
         )
 
     def open_spider(self, spider):
