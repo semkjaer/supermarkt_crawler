@@ -33,9 +33,8 @@ PROXY = 'zproxy.lum-superproxy.io'
 
 SPIDER_MODULES = ['supermarktcrawler.spiders']
 NEWSPIDER_MODULE = 'supermarktcrawler.spiders'
-
-MONGO_URI = 'mongodb+srv://sem:deka@cluster0.olmaj.mongodb.net/product_data_test?retryWrites=true&w=majority'
-MONGO_DATABASE = 'product_data'
+MONGO_URI = 'mongodb+srv://sem:deka@cluster0.olmaj.mongodb.net/?retryWrites=true&w=majority'
+MONGO_DATABASE = 'product_data_test'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
