@@ -10,9 +10,13 @@
 BOT_NAME = 'supermarktcrawler'
 # laat bezochte sites en gespcrapede items zien
 LOG_LEVEL = 'DEBUG'
+
+RETRY_TIMES = 2  # initial response + 2 retries = 3 requests
+RETRY_HTTP_CODES = [500, 502, 503, 504, 522, 524, 408, 429, 403]
+
 # crawl only 10 items
 #IS_DEV = True
-IS_DEV = False
+IS_DEV = True
 
 MYSQL_DB = {
   'host' : 'frello.nl',
@@ -21,15 +25,16 @@ MYSQL_DB = {
   'database' : 'product_data'
 }
 
-ROTATING_PROXY_LIST = [
-    'http://nl.proxymesh.com:31280'
-]
-PROXY = 'http://nl.proxymesh.com:31280'
+PROXY_DOMAIN = 'zproxy.lum-superproxy.io'
+PROXY_PORT = '22225'
+PROXY_USER = 'lum-customer-hl_b0dd62ad-zone-data_center'
+PROXY_PASS = '9lbaic3janf1'
+PROXY = 'zproxy.lum-superproxy.io'
 
 SPIDER_MODULES = ['supermarktcrawler.spiders']
 NEWSPIDER_MODULE = 'supermarktcrawler.spiders'
 
-MONGO_URI = 'mongodb+srv://sem:deka@cluster0.olmaj.mongodb.net/product_data?retryWrites=true&w=majority'
+MONGO_URI = 'mongodb+srv://sem:deka@cluster0.olmaj.mongodb.net/product_data_test?retryWrites=true&w=majority'
 MONGO_DATABASE = 'product_data'
 
 
@@ -64,16 +69,16 @@ CONCURRENT_REQUESTS_PER_DOMAIN = 1
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'supermarktcrawler.middlewares.SupermarktcrawlerSpiderMiddleware': 543,
-#}
+# SPIDER_MIDDLEWARES = {
+#    'supermarktcrawler.middlewares.MyProxyMiddleware': 610
+# }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-    'rotating_proxies.middlewares.RotatingProxyMiddleware': 610,
-    'rotating_proxies.middlewares.BanDetectionMiddleware': 620
+    'supermarktcrawler.middlewares.MyProxyMiddleware': 10
 }
+
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

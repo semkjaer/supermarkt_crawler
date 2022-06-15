@@ -25,17 +25,9 @@ class DekamarktSpider(scrapy.Spider):
             'win32' : r'C:\Users\SemKj\Downloads\chromedriver_win32\chromedriver'
         }
         options = Options()
-        webdriver.DesiredCapabilities.CHROME['proxy'] = {
-            "httpProxy": PROXY,
-            "ftpProxy": PROXY,
-            "sslProxy": PROXY,
-            "proxyType": "MANUAL",
-
-        }
-
-        webdriver.DesiredCapabilities.CHROME['acceptSslCerts']=True
         options.headless = True
         chromedriver = webdriver.Chrome(executable_path=platforms[sys.platform], options=options)
+
         chromedriver.get('https://www.dekamarkt.nl')
         sleep(10)
         try: 
@@ -59,7 +51,7 @@ class DekamarktSpider(scrapy.Spider):
                 href = '/'.join(link.split('/')[4:])
                 sleep(1)
                 print(categories)
-                product_links = set(x.get_attribute('href') for x in chromedriver.find_elements(By.XPATH, f'//a[contains(@href, "{href}/")]'))
+                product_links = set(x.get_attribute('href') for x in chromedriver.find_elements(By.XPATH, f'//a[contains(@class, "product")]'))
                 products.update(product_links)
                 if IS_DEV: break
             if IS_DEV: break
@@ -73,16 +65,16 @@ class DekamarktSpider(scrapy.Spider):
 
             yield item
 
-    def parse_product_page(self, response):
-        item = SupermarktcrawlerItem(url=response.url)
-        item['naam'] = response.xpath('//h1[@class="product-details__info__title"]/text()').get()
-        item['inhoud'] = response.xpath('//span[@class="product-details__info__subtitle"]/text()').get()
-        euros = response.xpath('//span[@class="product-card__price__euros"]/text()').get()
-        cents = response.xpath('//span[@class="product-card__price__cents"]/text()').get()
-        item['prijs'] = euros + cents
-        item['omschrijving'] = response.xpath('//div[@class="product-details__extra__content"]/text()').get()
-        #item['aanbieding'] = response.xpath('//div[@class="product-card__discount"]//text()').getall() or []
-        item['categorie'] = [x.strip() for x in response.xpath('//div[@class="bread-crumb"]//a/text()').getall()[:-1]]
-        item['tijd'] = datetime.now()
+    # def parse_product_page(self, response):
+    #     item = SupermarktcrawlerItem(url=response.url)
+    #     item['naam'] = response.xpath('//h1[@class="product-details__info__title"]/text()').get()
+    #     item['inhoud'] = response.xpath('//span[@class="product-details__info__subtitle"]/text()').get()
+    #     euros = response.xpath('//span[@class="product-card__price__euros"]/text()').get()
+    #     cents = response.xpath('//span[@class="product-card__price__cents"]/text()').get()
+    #     item['prijs'] = euros + cents
+    #     item['omschrijving'] = response.xpath('//div[@class="product-details__extra__content"]/text()').get()
+    #     #item['aanbieding'] = response.xpath('//div[@class="product-card__discount"]//text()').getall() or []
+    #     item['categorie'] = [x.strip() for x in response.xpath('//div[@class="bread-crumb"]//a/text()').getall()[:-1]]
+    #     item['tijd'] = datetime.now()
         
-        yield item
+    #     yield item

@@ -28,7 +28,7 @@ class JumboSpider(scrapy.Spider):
         item = ProductItem()
         item['url'] = response.url
         item['sku'] = item['url'].split('-')[-1]
-        item['naam'] = response.xpath('//h1/text()').get()
+        item['naam'] = response.xpath('//h1/strong/text()').get()
         price = response.xpath('//div[@class="current-price"]')
         euros = price.xpath('./span/text()').get()
         cents = price.xpath('./sup/text()').get()

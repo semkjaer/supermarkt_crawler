@@ -11,10 +11,6 @@ class JumboSpider(scrapy.Spider):
     allowed_domains = ['jumbo.com']
     start_urls = ['https://www.jumbo.com/aanbiedingen/alles']
     custom_settings = {
-        'DOWNLOADER_MIDDLEWARES' : {
-            'rotating_proxies.middlewares.RotatingProxyMiddleware': None,
-            'rotating_proxies.middlewares.BanDetectionMiddleware': None
-        },
         'ITEM_PIPELINES' : {
             'supermarktcrawler.pipelines.OfferPipeline': 300,
         }

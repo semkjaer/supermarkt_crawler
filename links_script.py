@@ -3,10 +3,10 @@
 import os
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-# spiders = os.popen('scrapy list').read()
+
+to_crawl = [spider for spider in [x for x in os.popen('scrapy list').read().split('\n') if x] if 'links' in spider]
+
 process = CrawlerProcess(get_project_settings())
-process.crawl('dk_links')
-process.crawl('ah_links')
-process.crawl('jb_links')
-process.crawl('vm_links')
+for spider in to_crawl:
+    process.crawl(spider)
 process.start()

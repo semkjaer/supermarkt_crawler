@@ -27,17 +27,11 @@ class AlbertHeijnSpider(scrapy.Spider):
             'linux' : '/usr/lib/chromium-browser/chromedriver',
             'win32' : r'C:\Users\SemKj\Downloads\chromedriver_win32\chromedriver'
         }
+
         options = Options()
-        webdriver.DesiredCapabilities.CHROME['proxy'] = {
-            "httpProxy": PROXY,
-            "ftpProxy": PROXY,
-            "sslProxy": PROXY,
-            "proxyType": "MANUAL",
-
-        }
-
-        webdriver.DesiredCapabilities.CHROME['acceptSslCerts']=True
         options.headless = True
+        webdriver.DesiredCapabilities.CHROME['acceptSslCerts']=True
+
         chromedriver = webdriver.Chrome(executable_path=platforms[sys.platform], options=options)
 
         categories = {'https://www.ah.nl' + href for href in response.xpath('//a[@data-testhook="taxonomy-main"]/@href').getall()}
