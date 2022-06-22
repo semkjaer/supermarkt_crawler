@@ -45,7 +45,7 @@ class DekamarktSpider(scrapy.Spider):
             chromedriver.get(url)
             href = url.split('.nl/')[-1]
             subcategories = set(x.get_attribute('href') for x in chromedriver.find_elements(By.XPATH, f'//ul/li/a[contains(@href, "{href}")]'))
-            print(subcategories)
+
             for link in subcategories:
                 chromedriver.get(link)
                 href = '/'.join(link.split('/')[4:])
