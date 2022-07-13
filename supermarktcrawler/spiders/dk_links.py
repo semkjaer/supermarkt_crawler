@@ -25,6 +25,7 @@ class DekamarktSpider(scrapy.Spider):
             'win32' : r'C:\Users\SemKj\Downloads\chromedriver_win32\chromedriver'
         }
         options = Options()
+        options.AddArgument("--log-level=3")
         options.headless = True
         chromedriver = webdriver.Chrome(executable_path=platforms[sys.platform], options=options)
 
@@ -49,8 +50,6 @@ class DekamarktSpider(scrapy.Spider):
             for link in subcategories:
                 chromedriver.get(link)
                 href = '/'.join(link.split('/')[4:])
-                sleep(1)
-                print(categories)
                 product_links = set(x.get_attribute('href') for x in chromedriver.find_elements(By.XPATH, f'//a[contains(@class, "product")]'))
                 products.update(product_links)
                 if IS_DEV: break

@@ -29,6 +29,7 @@ class AlbertHeijnSpider(scrapy.Spider):
         }
 
         options = Options()
+        options.AddArgument("--log-level=3")
         options.headless = True
         webdriver.DesiredCapabilities.CHROME['acceptSslCerts']=True
 

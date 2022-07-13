@@ -3,11 +3,10 @@
 import os
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
-# spiders = os.popen('scrapy list').read()
+
+to_crawl = [spider for spider in [x for x in os.popen('scrapy list').read().split('\n') if x] if 'offers' in spider]
+
 process = CrawlerProcess(get_project_settings())
-process.crawl('dk_offers')
-process.crawl('ah_offers')
-process.crawl('jb_offers')
-# vomar heeft alleen een kortingsfolder in foto format
-#process.crawl('vm_offers')
-process.start()
+for spider in to_crawl:
+    process.crawl(spider)
+    process.start()
