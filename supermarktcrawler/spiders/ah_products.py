@@ -28,25 +28,27 @@ class AlbertHeijnSpider(scrapy.Spider):
 
     def parse(self, response):
         '''scrape product page'''
+        # save page locally
         # if path.exists('/media/pi/48A0-4B5F/pages/'):
         #     filename = response.url.split('://')[-1].replace('/', '_')
         #     with open(f'/media/pi/48A0-4B5F/pages/{filename}.html', 'w') as html_file:
         #         html_file.write(response.text)
 
         item = ProductItem()
-        item['url'] = response.url
-        item['sku'] = item['url'].split('/')[-2]
-        item['naam'] = response.xpath('//h1/span/text()').get()
-        item['omschrijving'] = response.xpath('//li[contains(@class, "product-info-description_listItem")]/text()').getall()
-        item['inhoud'] = response.xpath('//h4[text()="Inhoud en gewicht"]/following-sibling::p/text()').getall()
-        item['kenmerken'] = response.xpath('//h4[text()="Kenmerken"]/following-sibling::ul//text()').getall()
-        # prijs staat in 3 spans waar de middelste een punt is eg: '3', '.', '99'
+
         price = ''.join(response.xpath('//div[contains(@class, "price-amount_root")]/span/text()').getall())
         prijs = re.sub(r'/.', '', price)
         if len(prijs) == 8:
             item['prijs'] = prijs[-4:]
         else:
             item['prijs'] = prijs
+            
+        item['url'] = response.url
+        item['sku'] = item['url'].split('/')[-2]
+        item['naam'] = response.xpath('//h1/span/text()').get()
+        item['omschrijving'] = response.xpath('//li[contains(@class, "product-info-description_listItem")]/text()').getall()
+        item['inhoud'] = response.xpath('//h4[text()="Inhoud en gewicht"]/following-sibling::p/text()').getall()
+        item['kenmerken'] = response.xpath('//h4[text()="Kenmerken"]/following-sibling::ul//text()').getall()
         item['categorie'] = [x for x in response.xpath('//ol[contains(@class, "page-navigation_breadcrumbs")]//span/text()').getall() if x not in ['Home', 'Producten']]
         item['tijd'] = datetime.now()
 

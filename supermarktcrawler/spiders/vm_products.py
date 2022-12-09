@@ -21,6 +21,7 @@ class JumboSpider(scrapy.Spider):
     }
 
     def parse(self, response):
+        # safe html locally
         # if path.exists('/media/pi/48A0-4B5F/pages/'):
         #     filename = response.url.split('://')[-1].replace('/', '_')
         #     with open(f'/media/pi/48A0-4B5F/pages/{filename}.html', 'w') as html_file:

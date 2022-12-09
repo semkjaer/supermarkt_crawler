@@ -12,7 +12,6 @@ import pymongo
 
 
 class ProductPipeline:
-
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
@@ -36,8 +35,8 @@ class ProductPipeline:
             self.db['products'].replace_one({'url': item['url']}, item, upsert=True)
         return item
 
-class OfferPipeline:
 
+class OfferPipeline:
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db
@@ -61,8 +60,8 @@ class OfferPipeline:
             self.db['offers'].replace_one({'url': item['url']}, item, upsert=True)
         return item
 
-class LinkPipeline:
 
+class LinkPipeline:
     def __init__(self, mongo_uri, mongo_db):
         self.mongo_uri = mongo_uri
         self.mongo_db = mongo_db

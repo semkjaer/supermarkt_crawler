@@ -16,7 +16,7 @@ RETRY_HTTP_CODES = [500, 502, 503, 504, 522, 524, 408, 429, 403]
 
 # crawl only 10 items
 #IS_DEV = True
-IS_DEV = True
+IS_DEV = False
 
 MYSQL_DB = {
   'host' : 'frello.nl',

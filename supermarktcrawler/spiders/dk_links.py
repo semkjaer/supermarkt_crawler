@@ -25,7 +25,6 @@ class DekamarktSpider(scrapy.Spider):
             'win32' : r'C:\Users\SemKj\Downloads\chromedriver_win32\chromedriver'
         }
         options = Options()
-        options.AddArgument("--log-level=3")
         options.headless = True
         chromedriver = webdriver.Chrome(executable_path=platforms[sys.platform], options=options)
 
@@ -63,17 +62,3 @@ class DekamarktSpider(scrapy.Spider):
             item['winkel'] = 'dk'
 
             yield item
-
-    # def parse_product_page(self, response):
-    #     item = SupermarktcrawlerItem(url=response.url)
-    #     item['naam'] = response.xpath('//h1[@class="product-details__info__title"]/text()').get()
-    #     item['inhoud'] = response.xpath('//span[@class="product-details__info__subtitle"]/text()').get()
-    #     euros = response.xpath('//span[@class="product-card__price__euros"]/text()').get()
-    #     cents = response.xpath('//span[@class="product-card__price__cents"]/text()').get()
-    #     item['prijs'] = euros + cents
-    #     item['omschrijving'] = response.xpath('//div[@class="product-details__extra__content"]/text()').get()
-    #     #item['aanbieding'] = response.xpath('//div[@class="product-card__discount"]//text()').getall() or []
-    #     item['categorie'] = [x.strip() for x in response.xpath('//div[@class="bread-crumb"]//a/text()').getall()[:-1]]
-    #     item['tijd'] = datetime.now()
-        
-    #     yield item
